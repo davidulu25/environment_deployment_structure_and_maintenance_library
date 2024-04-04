@@ -12,20 +12,34 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+import environ
+import os
 
+from library.env_cache import cache_dictionary
+
+import django_redis
+
+env = environ.Env()
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# take environment variables from .env file
+environ.Env.read_env("../")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-5fcm#9keuag=xgz+gx$u-w+q)s8d_omk3nbc)dz#u)^!a#orsv'
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = []
+if env("ALLOWED_HOSTS") == "[]":
+    ALLOWED_HOSTS = []
+else:
+    ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
 
 # Application definition
@@ -40,6 +54,9 @@ INSTALLED_APPS = [
     "rest_framework",
     "book_model_space",
     "author_model_space",
+    "genre_model_space",
+    "bookinstance_model_space",
+    "task_model_space",
 ]
 
 MIDDLEWARE = [
@@ -77,10 +94,20 @@ WSGI_APPLICATION = 'environment_deployment_structure_and_maintenance_library.wsg
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
+    # 'default': env.db(),
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+        'NAME': os.path.join(BASE_DIR, env("DATABASE_NAME")),
+    }, # uncomment!
+    # 'mysql': {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'environment_artefact',
+    #     'USER': 'david', # Replace with your MySQL database user
+    #     'PASSWORD': 'bellum', # Replace with your MySQL database password
+    #     'HOST': 'localhost',
+    #     'PORT': '', # Leave empty to use the default MySQL port (3306)
+    # }
 }
 
 
@@ -135,3 +162,11 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
 }
+
+CACHES = cache_dictionary["local_memory"]
+
+# import dj_database_url
+
+# DATABASES['default'] = dj_database_url.config(conn_max_age=600)
+
+# DATABASES['default'] = dj_database_url.config(default="mysql://...")

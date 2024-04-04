@@ -1,7 +1,11 @@
 from django.shortcuts import render
+from django.utils.decorators import method_decorator
 
 from rest_framework import generics, authentication, permissions
 from rest_framework.response import Response
+
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_cookie, vary_on_headers
 
 from .models import Book
 from .serializers import BookSerializer
@@ -48,6 +52,10 @@ class BookListView(generics.ListAPIView):
     # only work on update and not create
     def update(self, request, *args, **kwargs):
         pass
+    
+    @method_decorator(cache_page(60 * 60 * 2.5))
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         queryset = Book.objects.all()
