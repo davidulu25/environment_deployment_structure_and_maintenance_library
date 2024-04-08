@@ -16,6 +16,7 @@ import environ
 import os
 
 from library.env_cache import cache_dictionary
+from library.env_logging import log_dict
 
 import django_redis
 
@@ -57,6 +58,7 @@ INSTALLED_APPS = [
     "genre_model_space",
     "bookinstance_model_space",
     "task_model_space",
+    "authentication_view_space",
 ]
 
 MIDDLEWARE = [
@@ -163,7 +165,14 @@ REST_FRAMEWORK = {
     ],
 }
 
-CACHES = cache_dictionary["local_memory"]
+CACHES = cache_dictionary[env("CACHE_KEY")]
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": log_dict[env("LOG_HANDLER")],
+    "loggers": log_dict[env("LOGGER")]
+}
 
 # import dj_database_url
 

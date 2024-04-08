@@ -6,6 +6,11 @@ from rest_framework.response import Response
 from .models import BookInstance
 from .serializers import BookInstanceSerializer
 
+import environ
+
+env = environ.Env()
+env.read_env("../")
+
 class BookInstanceSingularView(generics.CreateAPIView, generics.RetrieveUpdateDestroyAPIView):
     queryset = BookInstance.objects.all()
     serializer_class = BookInstanceSerializer
@@ -42,13 +47,18 @@ class BookInstanceListView(generics.ListAPIView, generics.CreateAPIView, generic
     queryset = BookInstance.objects.all()
     serializer_class = BookInstanceSerializer
     authentication_classes = [authentication.BasicAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    if env("ENVIRONMENT") == "development":
+        permission_classes = [permissions.IsAuthenticated]
+    else:
+        permission_classes = [permissions.IsAdminUser]
 
     # function to override deleting single model instance
-    def destroy(self, request, *args, **kwargs):
-        queryset = BookInstance.objects.all()
-        respite, _ = queryset.delete()
-        return Response({"message": f"all bookinstances ({respite}) were deleted successfully"})
+    if env("ENVIRONMENT") != "production":
+        def destroy(self, request, *args, **kwargs):
+            queryset = BookInstance.objects.all()
+            respite, _ = queryset.delete()
+            return Response({"message": f"all bookinstances ({respite}) were deleted successfully"})
+        
 
     def get(self, request, *args, **kwargs):
         if self.get_queryset() is None:

@@ -19,12 +19,12 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('auth/', include('authentication_view_space.urls')),
     path('books/', include('book_model_space.urls')),
     path('authors/', include('author_model_space.urls')),
     path('bookinstances/', include('bookinstance_model_space.urls')),
     path('genres/', include('genre_model_space.urls')),
     # path('count/', include('count_view_space.urls')),
-    # path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
     # path('accounts/', include('django.contrib.auth.urls')),
     path('tasks/', include('task_model_space.urls')),
 ]

@@ -10,6 +10,11 @@ from django.views.decorators.vary import vary_on_cookie, vary_on_headers
 from .models import Book
 from .serializers import BookSerializer
 
+import environ
+
+env = environ.Env()
+env.read_env("../")
+
 class BookSingularView(generics.CreateAPIView, generics.RetrieveUpdateDestroyAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
@@ -57,10 +62,12 @@ class BookListView(generics.ListAPIView):
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    def destroy(self, request, *args, **kwargs):
-        queryset = Book.objects.all()
-        respite, _ = queryset.delete()
-        return Response({"message": f"all tasks ({respite}) were deleted successfully"})
+    if env("ENVIRONMENT") != "production":
+        def destroy(self, request, *args, **kwargs):
+            queryset = Book.objects.all()
+            respite, _ = queryset.delete()
+            return Response({"message": f"all tasks ({respite}) were deleted successfully"})
+
     
     def get(self, request, *args, **kwargs):
         if self.get_queryset() is None:

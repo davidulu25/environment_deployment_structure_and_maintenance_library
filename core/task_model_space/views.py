@@ -6,6 +6,11 @@ from rest_framework.response import Response
 from .models import Task
 from .serializers import TaskSerializer
 
+import environ
+
+env = environ.Env()
+env.read_env("../")
+
 class TaskSingularView(generics.CreateAPIView, generics.RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
@@ -43,10 +48,12 @@ class TaskListView(generics.ListAPIView, generics.CreateAPIView, generics.Retrie
     serializer_class = TaskSerializer
 
     # function to override deleting single model instance
-    def destroy(self, request, *args, **kwargs):
-        queryset = Task.objects.all()
-        respite, _ = queryset.delete()
-        return Response({"message": f"all tasks ({respite}) were deleted successfully"})
+    if env("ENVIRONMENT") != "production":
+        def destroy(self, request, *args, **kwargs):
+            queryset = Task.objects.all()
+            respite, _ = queryset.delete()
+            return Response({"message": f"all tasks ({respite}) were deleted successfully"})
+
 
     def get(self, request, *args, **kwargs):
         if self.get_queryset() is None:

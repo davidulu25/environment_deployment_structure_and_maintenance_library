@@ -17,5 +17,11 @@ cache_dictionary = {
                 "CLIENT_CLASS": env("CLIENT_CLASS")
             }
         }
-    }
+    },
+    # "redis": {
+    #     "default": {
+    #         "BACKEND": env("REDIS_BACKEND"),
+    #         "LOCATION": env("REDIS_LOCATION"),
+    #     }
+    # },
 }
