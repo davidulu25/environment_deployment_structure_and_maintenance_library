@@ -9,7 +9,7 @@ from .serializers import TaskSerializer
 import environ
 
 env = environ.Env()
-env.read_env("../")
+env.read_env("../../.env")
 
 class TaskSingularView(generics.CreateAPIView, generics.RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()
@@ -48,7 +48,7 @@ class TaskListView(generics.ListAPIView, generics.CreateAPIView, generics.Retrie
     serializer_class = TaskSerializer
 
     # function to override deleting single model instance
-    if env("ENVIRONMENT") != "production":
+    if env("CONTEXT") != "production":
         def destroy(self, request, *args, **kwargs):
             queryset = Task.objects.all()
             respite, _ = queryset.delete()

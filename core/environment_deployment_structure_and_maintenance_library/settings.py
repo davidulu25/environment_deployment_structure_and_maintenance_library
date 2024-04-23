@@ -20,13 +20,14 @@ from library.env_logging import log_dict
 
 import django_redis
 
+
 env = environ.Env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # take environment variables from .env file
-environ.Env.read_env("../")
+environ.Env.read_env("../../.env")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -35,12 +36,9 @@ environ.Env.read_env("../")
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env("DEBUG")
+DEBUG = False
 
-if env("ALLOWED_HOSTS") == "[]":
-    ALLOWED_HOSTS = []
-else:
-    ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
+ALLOWED_HOSTS = [] if env("ALLOWED_HOSTS") == "[]" else env.list("ALLOWED_HOSTS")
 
 
 # Application definition
@@ -95,22 +93,7 @@ WSGI_APPLICATION = 'environment_deployment_structure_and_maintenance_library.wsg
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    # 'default': env.db(),
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, env("DATABASE_NAME")),
-    }, # uncomment!
-    # 'mysql': {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'environment_artefact',
-    #     'USER': 'david', # Replace with your MySQL database user
-    #     'PASSWORD': 'bellum', # Replace with your MySQL database password
-    #     'HOST': 'localhost',
-    #     'PORT': '', # Leave empty to use the default MySQL port (3306)
-    # }
-}
+DATABASES = {'default': env.db()}
 
 
 # Password validation
@@ -149,6 +132,12 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATIC_ROOT = "node_modules/static"
+
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, "node_modules/static/"),
+# ]
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
@@ -173,6 +162,8 @@ LOGGING = {
     "handlers": log_dict[env("LOG_HANDLER")],
     "loggers": log_dict[env("LOGGER")]
 }
+
+MEDIA_ROOT = "node_modules"
 
 # import dj_database_url
 

@@ -1,7 +1,7 @@
 import environ
 
 env = environ.Env()
-env.read_env("../")
+env.read_env("../../.env")
 
 cache_dictionary = {
     "local_memory": {

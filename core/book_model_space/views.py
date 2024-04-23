@@ -13,7 +13,7 @@ from .serializers import BookSerializer
 import environ
 
 env = environ.Env()
-env.read_env("../")
+env.read_env("../../.env")
 
 class BookSingularView(generics.CreateAPIView, generics.RetrieveUpdateDestroyAPIView):
     queryset = Book.objects.all()
@@ -62,7 +62,7 @@ class BookListView(generics.ListAPIView):
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    if env("ENVIRONMENT") != "production":
+    if env("CONTEXT") != "production":
         def destroy(self, request, *args, **kwargs):
             queryset = Book.objects.all()
             respite, _ = queryset.delete()

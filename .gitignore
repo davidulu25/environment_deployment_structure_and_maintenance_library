@@ -1,2 +1,15 @@
 .env
+.gitignore
 core/.venv
+core/db.sqlite3
+core/data_mysql.json
+core/library/env_parser.py
+core/library/env_cache.py
+core/debug.log
+core/tracking.log
+core/library/env_logging.py
+core/data_postgres.json
+core/.dockerignore
+deployment/compose.yaml
+core/node_modules
+core/library/cherrypy_server.py

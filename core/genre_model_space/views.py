@@ -10,7 +10,7 @@ import environ
 from django.http import HttpResponse
 
 env = environ.Env()
-env.read_env("../")
+env.read_env("../../.env")
 
 class GenreSingularView(generics.CreateAPIView, generics.RetrieveUpdateDestroyAPIView):
     queryset = Genre.objects.all()
@@ -51,7 +51,7 @@ class GenreListView(generics.ListAPIView, generics.CreateAPIView, generics.Retri
     permission_classes = [permissions.IsAuthenticated]
 
     # function to override deleting single model instance
-    if env("ENVIRONMENT") != "production":
+    if env("CONTEXT") != "production":
         def destroy(self, request, *args, **kwargs):
             queryset = Genre.objects.all()
             respite, _ = queryset.delete()

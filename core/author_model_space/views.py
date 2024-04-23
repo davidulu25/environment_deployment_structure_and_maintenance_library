@@ -17,7 +17,7 @@ env.read_env("../")
 class AuthorSingularView(generics.CreateAPIView, generics.RetrieveUpdateDestroyAPIView):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
-    if env("ENVIRONMENT") == "production":
+    if env("CONTEXT") == "production":
         authentication_classes = [authentication.BasicAuthentication]
         permission_classes = [permissions.IsAuthenticated]
     else:
@@ -59,10 +59,11 @@ class AuthorListView(generics.ListAPIView, generics.CreateAPIView, generics.Retr
     permission_classes = [permissions.IsAuthenticated]
 
     # function to override deleting single model instance
-    def destroy(self, request, *args, **kwargs):
-        queryset = Author.objects.all()
-        respite, _ = queryset.delete()
-        return Response({"message": f"all author profiles ({respite}) were deleted"})
+    if env("CONTEXT") != "production":
+        def destroy(self, request, *args, **kwargs):
+            queryset = Author.objects.all()
+            respite, _ = queryset.delete()
+            return Response({"message": f"all author profiles ({respite}) were deleted"})
 
     def get(self, request, *args, **kwargs):
         if self.get_queryset() is None:

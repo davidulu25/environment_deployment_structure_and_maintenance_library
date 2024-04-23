@@ -47,13 +47,13 @@ class BookInstanceListView(generics.ListAPIView, generics.CreateAPIView, generic
     queryset = BookInstance.objects.all()
     serializer_class = BookInstanceSerializer
     authentication_classes = [authentication.BasicAuthentication]
-    if env("ENVIRONMENT") == "development":
+    if env("CONTEXT") == "development":
         permission_classes = [permissions.IsAuthenticated]
     else:
         permission_classes = [permissions.IsAdminUser]
 
     # function to override deleting single model instance
-    if env("ENVIRONMENT") != "production":
+    if env("CONTEXT") != "production":
         def destroy(self, request, *args, **kwargs):
             queryset = BookInstance.objects.all()
             respite, _ = queryset.delete()

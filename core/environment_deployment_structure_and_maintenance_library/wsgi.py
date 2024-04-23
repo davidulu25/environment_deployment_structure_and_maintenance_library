@@ -11,8 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-# from .project_analysis import project_analysis
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'environment_deployment_structure_and_maintenance_library.settings')
 
 application = get_wsgi_application()
